@@ -6,48 +6,72 @@ class Magatzem {
     }
 
     public void actualitzarEstat() {
+        // Recorrem tots els articles del magatzem un per un amb un bucle
         for (Article article : articles) {
-            // El Martell de Thor és immòbil: Ni caduca ni canvia de qualitat
+
+            // Cas 1: El Martell de Thor és un objecte llegendari
+            // Com que ni caduca ni canvia de qualitat, passem directament al següent
+            // article
             if (article.nom.equals("Martell de Thor (Llegendari)")) {
-                continue; // Salta al següent article sense fer res
+                continue;
             }
 
-            // Tots els altres articles disminueixen els seus dies per vendre en 1
+            // Resta de casos: Com que ja hem descartat el Martell de Thor, sabem que a tots
+            // els altres articles els baixa en 1 el dia per vendre
             article.diesPerVendre--;
 
-            // Gestionar el comportament segons el tipus d'article
+            // Cas 2: El Formatge Gidurat (Millora amb el temps)
             if (article.nom.equals("Formatge Gidurat")) {
+                // Si encara no ha arribat al límit màxim de 50, li sumem 1 de qualitat
                 if (article.qualitat < 50) {
                     article.qualitat++;
                 }
-                // Si ha vençut la data, el formatge millora el doble de ràpid
+                // Si a sobre ja ha caducat (dies < 0), millora el doble de ràpid (li sumem un
+                // altre punt)
                 if (article.diesPerVendre < 0 && article.qualitat < 50) {
                     article.qualitat++;
                 }
-            } else if (article.nom.equals("Entrades per al Concert del Trobador")) {
+            }
+
+            // Cas 3: Les entrades del concert (Logica segons els dies que queden)
+            else if (article.nom.equals("Entrades per al Concert del Trobador")) {
+                // Si el concert ja ha passat, les entrades no valen res (qualitat 0)
                 if (article.diesPerVendre < 0) {
-                    article.qualitat = 0; // Després del concert, qualitat 0
-                } else if (article.diesPerVendre <= 5) {
+                    article.qualitat = 0;
+                }
+                // Si queden 5 dies o menys, pugem la qualitat en 3
+                else if (article.diesPerVendre <= 5) {
                     article.qualitat += 3;
-                } else if (article.diesPerVendre <= 10) {
+                }
+                // Si queden entre 6 i 10 dies, pugem la qualitat en 2
+                else if (article.diesPerVendre <= 10) {
                     article.qualitat += 2;
-                } else {
+                }
+                // Si falta molt de temps (més de 10 dies), puja normal (en 1)
+                else {
                     article.qualitat += 1;
                 }
-                // Assegurar que les entrades no superen la qualitat de 50 abans del concert
+
+                // Control de seguretat: Si en sumar la qualitat ens hem passat de 50, la tornem
+                // a frenar a 50 (ja que encara no ha passat el concert)
                 if (article.diesPerVendre >= 0 && article.qualitat > 50) {
                     article.qualitat = 50;
                 }
-            } else {
-                // Articles Normals
+            }
+
+            // Cas 4: Articles Normals (Tots els altres productes que no encaixen dalt)
+            else {
+                // Si té qualitat, li restem 1 punt com cada dia
                 if (article.qualitat > 0) {
                     article.qualitat--;
                 }
-                // Si la data venç, la qualitat baixa el doble de ràpid
+                // Si a sobre l'article ha caducat (dies < 0), baixa el doble de ràpid (li
+                // restem un altre punt)
                 if (article.diesPerVendre < 0 && article.qualitat > 0) {
                     article.qualitat--;
                 }
             }
+
         }
     }
 }
